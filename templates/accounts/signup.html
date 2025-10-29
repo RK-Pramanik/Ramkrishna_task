@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="mb-3">Create an account</h4>
+        <form method="post">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            {{ form.username }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            {{ form.email }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            {{ form.password1 }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Confirm password</label>
+            {{ form.password2 }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            {{ form.role }} <!-- If your signup form includes a role field -->
+            <small class="form-text text-muted">Choose teacher or student (admin set in admin panel).</small>
+          </div>
+          <button class="btn btn-success" type="submit">Sign up</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

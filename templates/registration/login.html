@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Welcome - Task Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid min-vh-100 d-flex align-items-center py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+  <div class="row justify-content-center w-100">
+    <div class="col-md-8 col-lg-6">
+      <!-- Welcome Banner -->
+      <div class="text-center mb-4">
+        <h1 class="display-4 fw-bold text-primary mb-3">Task Management System</h1>
+        <p class="lead">Streamline your educational tasks with our comprehensive management platform</p>
+      </div>
+      
+      <div class="row g-4">
+        <!-- Login Card -->
+        <div class="col-md-7">
+          <div class="card shadow-lg border-0">
+            <div class="card-body p-4">
+              <h4 class="card-title mb-4">Welcome Back!</h4>
+              
+              {% if form.errors %}
+              <div class="alert alert-danger">
+                Invalid username or password. Please try again.
+              </div>
+              {% endif %}
+              
+              <form method="post" action="{% url 'login' %}" class="needs-validation" novalidate>
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                
+                <div class="form-floating mb-3">
+                  {{ form.username }}
+                  <label for="id_username">Username</label>
+                </div>
+                
+                <div class="form-floating mb-4">
+                  {{ form.password }}
+                  <label for="id_password">Password</label>
+                </div>
+                
+                <div class="d-grid gap-2">
+                  <button class="btn btn-primary btn-lg" type="submit">Sign In</button>
+                </div>
+                
+                <input type="hidden" name="next" value="{{ next }}">
+              </form>
+              
+              <div class="text-center mt-4">
+                <p class="mb-0">New to the platform? <a href="{% url 'accounts:signup' %}" class="text-primary fw-bold">Create Account</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Features Card -->
+        <div class="col-md-5">
+          <div class="card shadow-lg border-0 bg-primary text-white">
+            <div class="card-body p-4">
+              <h4 class="card-title mb-4">Available Roles</h4>
+              
+              <div class="mb-4">
+                <h6 class="fw-bold"><i class="fas fa-user-shield me-2"></i>Admin</h6>
+                <p class="small mb-3">Full system control and user management</p>
+                
+                <h6 class="fw-bold"><i class="fas fa-chalkboard-teacher me-2"></i>Teacher</h6>
+                <p class="small mb-3">Create and manage assignments</p>
+                
+                <h6 class="fw-bold"><i class="fas fa-user-graduate me-2"></i>Student</h6>
+                <p class="small">Submit work and track progress</p>
+              </div>
+              
+              <div class="mt-4 pt-2 border-top border-light">
+                <h6 class="fw-bold mb-3">Key Features</h6>
+                <ul class="list-unstyled small">
+                  <li class="mb-2">✓ Real-time task tracking</li>
+                  <li class="mb-2">✓ File submissions</li>
+                  <li class="mb-2">✓ Progress monitoring</li>
+                  <li>✓ Role-based access control</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .form-floating input {
+    height: calc(3.5rem + 2px);
+    padding: 1rem 0.75rem;
+  }
+  
+  .form-floating label {
+    padding: 1rem 0.75rem;
+  }
+  
+  .form-floating > .form-control {
+    padding: 1rem 0.75rem;
+  }
+  
+  #id_username, #id_password {
+    display: block;
+    width: 100%;
+    padding: 1rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  }
+  
+  #id_username:focus, #id_password:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+  }
+</style>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Task Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="display-6">Welcome, {{ user.get_full_name|default:user.username }}</h2>
+            <p class="text-muted">
+                {% if user.is_admin %}
+                    System Administrator
+                {% elif user.is_teacher %}
+                    Teacher
+                {% elif user.is_student %}
+                    Student
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Tasks</h5>
+                    <h2 class="display-6 mb-0">{{ total_tasks }}</h2>
+                    <small>{% if user.is_teacher %}Assigned by you{% elif user.is_student %}Assigned to you{% else %}Total tasks{% endif %}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Completed</h5>
+                    <h2 class="display-6 mb-0">{{ completed_tasks }}</h2>
+                    <small>Tasks completed</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body">
+                    <h5 class="card-title">In Progress</h5>
+                    <h2 class="display-6 mb-0">{{ in_progress_tasks }}</h2>
+                    <small>Tasks in progress</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Pending</h5>
+                    <h2 class="display-6 mb-0">{{ pending_tasks }}</h2>
+                    <small>Tasks pending</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Tasks and Activities -->
+    <div class="row g-4">
+        <!-- Recent Tasks -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Tasks</h5>
+                    <a href="{% url 'tasks:list' %}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Deadline</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in recent_tasks %}
+                                <tr>
+                                    <td>{{ task.title }}</td>
+                                    <td>
+                                        <span class="badge {% if task.status == 'completed' %}bg-success{% elif task.status == 'in_progress' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                            {{ task.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{% if task.deadline %}{{ task.deadline|date:"M d, Y" }}{% else %}No deadline{% endif %}</td>
+                                    <td>
+                                        <a href="{% url 'tasks:detail' task.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No tasks found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    {% if user.is_teacher or user.is_admin %}
+                    <a href="{% url 'tasks:create' %}" class="btn btn-primary d-block mb-2">Create New Task</a>
+                    {% endif %}
+                    <a href="{% url 'tasks:list' %}" class="btn btn-outline-primary d-block mb-2">View All Tasks</a>
+                    {% if user.is_admin %}
+                    <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary d-block">Admin Panel</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Submissions -->
+            {% if user.is_teacher or user.is_admin %}
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Submissions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for submission in recent_submissions %}
+                        <div class="list-group-item">
+                            <h6 class="mb-1">{{ submission.student.username }}</h6>
+                            <p class="mb-1 small">Submitted for: {{ submission.task.title }}</p>
+                            <small class="text-muted">{{ submission.uploaded_at|date:"M d, Y H:i" }}</small>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted text-center mb-0">No recent submissions</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

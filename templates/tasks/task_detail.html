@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}{{ task.title }}{% endblock %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h4>{{ task.title }}</h4>
+    <p class="text-muted">Created by {{ task.created_by.get_full_name|default:task.created_by.username }} • Assigned to {{ task.assigned_to.get_full_name|default:task.assigned_to.username }}</p>
+    <p>{{ task.description|linebreaks }}</p>
+
+    <ul class="list-unstyled mt-3">
+      <li><strong>Status:</strong> {{ task.get_status_display }}</li>
+      <li><strong>Deadline:</strong> {{ task.deadline|date:"M d, Y" }}</li>
+      <li>
+        <strong>Attachment:</strong>
+        {% if task.attachment %}
+          <a href="{{ task.attachment.url }}" target="_blank">Download</a>
+        {% else %}
+          <span class="text-muted">No file</span>
+        {% endif %}
+      </li>
+    </ul>
+
+    {% if user == task.assigned_to or user.is_teacher or user.is_admin %}
+      <hr>
+      <h6>Update status</h6>
+      <form method="post" action="{% url 'tasks:update_status' task.pk %}">
+        {% csrf_token %}
+        <div class="row g-2 align-items-center">
+          <div class="col-auto">
+            <select name="status" class="form-select form-select-sm">
+              {% for key, label in task.STATUS_CHOICES %}
+                <option value="{{ key }}" {% if task.status == key %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-sm btn-primary">Save</button>
+          </div>
+        </div>
+      </form>
+    {% endif %}
+
+    <!-- Submissions -->
+    <hr>
+    <h6>Submissions</h6>
+    {% if task.submissions.exists %}
+      <ul>
+        {% for sub in task.submissions.all %}
+          <li>
+            {{ sub.student.get_full_name|default:sub.student.username }} —
+            <a href="{{ sub.file.url }}">Download</a> ({{ sub.uploaded_at|date:"M d, Y H:i" }})
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-muted">No submissions yet.</p>
+    {% endif %}
+
+    <!-- Upload submission (students) -->
+    {% if user == task.assigned_to %}
+      <hr>
+      <h6>Upload Submission</h6>
+      <form method="post" enctype="multipart/form-data" action="{% url 'tasks:submit' task.pk %}">
+        {% csrf_token %}
+        <div class="mb-2">
+          <input class="form-control form-control-sm" type="file" name="file" required>
+        </div>
+        <button class="btn btn-sm btn-success">Upload</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

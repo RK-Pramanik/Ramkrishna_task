@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Home — Task Management{% endblock %}
+{% block content %}
+<div class="py-5 text-center bg-light rounded-3">
+  <h1 class="display-5 fw-bold">Welcome to Task Management</h1>
+  <p class="lead text-muted">Create, assign, and track tasks — Admin, Teacher, Student roles supported.</p>
+  {% if not user.is_authenticated %}
+    <a href="{% url 'login' %}" class="btn btn-primary btn-lg mt-2">Get Started</a>
+    <a href="{% url 'accounts:signup' %}" class="btn btn-outline-primary btn-lg mt-2 ms-2">Sign up</a>
+  {% else %}
+    <a href="{% url 'tasks:list' %}" class="btn btn-primary btn-lg mt-2">View My Tasks</a>
+  {% endif %}
+</div>
+
+<div class="row mt-4 g-3">
+  <div class="col-md-4"><div class="card p-3"><h5>Admin</h5><p>Manage users and roles.</p></div></div>
+  <div class="col-md-4"><div class="card p-3"><h5>Teacher</h5><p>Create & assign tasks to students.</p></div></div>
+  <div class="col-md-4"><div class="card p-3"><h5>Student</h5><p>See tasks and update status.</p></div></div>
+</div>
+{% endblock %}
